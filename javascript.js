@@ -34,6 +34,7 @@ function operate (operator, previous, current) {
             output = divide(previous, current);
             break;
         case "=":
+            output = current;
             break;
     }
 
@@ -55,7 +56,7 @@ function outputMessage (current, next) {
 }
 
 
-function calculate (obj, currentMessage, newOperator) {
+function calculate (obj, currentMessage, newOperator, replaceNumber) {
     // operators
     if (obj.operator.previous === undefined) {
         obj.operator.previous = newOperator;
@@ -76,16 +77,29 @@ function calculate (obj, currentMessage, newOperator) {
     // should only be here if everything is full.
     currentMessage = operate(obj.operator.previous, obj.previous, obj.next)
     outputMessage(0, currentMessage);
+    
+    // changing all next values to previous values
+    obj.previous = currentMessage;
+    obj.next = undefined;
 
-    return [obj, currentMessage];
+    obj.operator.previous = obj.operator.next;
+    obj.operator.next = undefined;
+
+    replaceNumber = true; 
+    return [obj, currentMessage, replaceNumber];
 }
 
 // numbers
+let replaceNumber = false;
 let currentMessage = outputMessage(0, 0);
 const numbers = document.querySelectorAll(".number");
 
 numbers.forEach(number => {
     number.addEventListener('click', () => {
+        if (replaceNumber == true) {
+            currentMessage = outputMessage(0, 0);
+            replaceNumber = false;
+        }
         currentMessage = outputMessage(currentMessage, number.textContent);
     })
 })
@@ -97,13 +111,14 @@ const coreFunctions = document.querySelectorAll(".core-function");
 let previous;
 let current;
 
-let operator = {previous, current};
-let values = {previous, current, operator};
+let operator = {};
+let values = {operator};
 
 coreFunctions.forEach(functions => {
     functions.addEventListener('click', () => {
-        const valuesTemp = calculate(values, currentMessage, functions.textContent)
+        const valuesTemp = calculate(values, currentMessage, functions.textContent, replaceNumber)
         values = valuesTemp[0];
         currentMessage = valuesTemp[1];
+        replaceNumber = valuesTemp[2];
     })
 })
