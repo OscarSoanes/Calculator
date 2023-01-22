@@ -57,6 +57,15 @@ function outputMessage (current, next) {
     return output;
 }
 
+function updateMessage (current) {
+    current = current * -1
+
+    const outputText = document.querySelector(".output")
+    outputText.textContent = current;
+
+    return current;
+}
+
 function calculate (obj, currentMessage, newOperator, edited) {
     if (edited === false) {
         obj.operator.previous = newOperator;
@@ -111,6 +120,7 @@ numbers.forEach(number => {
             currentMessage = outputMessage(0, 0);
             replaceNumber = false;
         }
+        
         clearBtn.textContent = "C"
         edited = true;
         currentMessage = outputMessage(currentMessage, number.textContent);
@@ -128,26 +138,28 @@ coreFunctions.forEach(functions => {
     })
 })
 
-// TODO : +/- button
-// TODO : % Button
-
 clearBtn.addEventListener('click', function (e) {
     if (edited === false && currentMessage === 0) { // AC
-        operator = {}
-        values = {operator}
+        operator = {};
+        values = {operator};
         return;
     }
 
     if (values.operator.previous === undefined) {
-        values = {operator}
+        values = {operator};
         currentMessage = outputMessage(0, 0);
         return;
     }
 
     edited = false;
     currentMessage = outputMessage(0, 0);
-    clearBtn.textContent = "AC"
+    clearBtn.textContent = "AC";
+})
+
+const changeBtn = document.querySelector("#change");
+changeBtn.addEventListener('click', function(e) {
+    currentMessage = updateMessage(currentMessage);
 })
 // TODO : . Button
-
+// TODO : % Button
 // TODO : GUI
