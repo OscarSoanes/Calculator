@@ -17,8 +17,8 @@ function divide (previous, current) {
 function operate (operator, previous, current) {
     let output;
 
-    previous = parseInt(previous);
-    current = parseInt(current);
+    previous = parseFloat(previous);
+    current = parseFloat(current);
 
     switch(operator) {
         case "+":
@@ -41,15 +41,21 @@ function operate (operator, previous, current) {
     return output;
 }
 
-function outputMessage (current, next) {
-    let output;
-    if (current === 0 && next != ".") {
-        output = next;
+function outputMessage (current, next, decimalPosition) {
+    let output = String();
+
+    if (current == 0) {
+        output += next.toString();
     } else {
-        output = current.toString() + next;
+        output += current.toString() + next;
     }
 
-    output = parseFloat((output.toString()).substring(0,10))
+    if (decimalPosition != undefined && !output.includes(".")) {
+        output = output.substring(0, decimalPosition) + "." + output.substring(decimalPosition);
+    }
+
+    // max length
+    output = output.substring(0, 10);
 
     const outputText = document.querySelector(".output")
     outputText.textContent = output;
@@ -57,7 +63,7 @@ function outputMessage (current, next) {
     return output;
 }
 
-function updateMessage (current) {
+function updateMessagePosNeg (current) {
     current = current * -1
 
     const outputText = document.querySelector(".output")
@@ -66,8 +72,8 @@ function updateMessage (current) {
     return current;
 }
 
-function calculate (obj, currentMessage, newOperator, edited) {
-    if (edited === false) {
+function calculate (obj, currentMessage, newOperator, isEdited) {
+    if (isEdited === false) {
         obj.operator.previous = newOperator;
         return [obj, currentMessage];
     }
@@ -104,62 +110,74 @@ function calculate (obj, currentMessage, newOperator, edited) {
 
 
 // variables
-let replaceNumber = false;
-let edited = false;
-let currentMessage = outputMessage(0, 0);
-let previous;
-let current;
+let replaceNumber = false; // tells whether the number needs to be changed
+let isEdited = false;
+let currentMessage = outputMessage(0, 0, undefined);
 let operator = {};
 let values = {operator};
+let decimalPosition;
+
 const clearBtn = document.querySelector("#clear");
+clearBtn.addEventListener('click', function (e) {
+    if (isEdited === false && currentMessage === 0) { // AC
+        operator = {};
+        values = {operator};
+        decimalPosition = undefined;
+        return;
+    }
+
+    if (values.operator.previous === undefined) {
+        values = {operator};
+        currentMessage = outputMessage(0, 0, undefined);
+        decimalPosition = undefined;
+        return;
+    }
+
+    isEdited = false;
+    currentMessage = outputMessage(0, 0, undefined);
+    clearBtn.textContent = "AC";
+    decimalPosition = undefined;
+})
 
 const numbers = document.querySelectorAll(".number");
 numbers.forEach(number => {
     number.addEventListener('click', () => {
-        if (replaceNumber == true) {
-            currentMessage = outputMessage(0, 0);
+        if (replaceNumber === true) {
+            currentMessage = outputMessage(0, 0, undefined);
             replaceNumber = false;
         }
-        
+
         clearBtn.textContent = "C"
-        edited = true;
-        currentMessage = outputMessage(currentMessage, number.textContent);
+        isEdited = true;
+        currentMessage = outputMessage(currentMessage, number.textContent, decimalPosition);
     })
 })
 
 const coreFunctions = document.querySelectorAll(".core-function");
 coreFunctions.forEach(functions => {
     functions.addEventListener('click', () => {
-        const valuesTemp = calculate(values, currentMessage, functions.textContent, edited)
+        const valuesTemp = calculate(values, currentMessage, functions.textContent, isEdited)
         values = valuesTemp[0];
         currentMessage = valuesTemp[1];
         replaceNumber = true;
-        edited = false;
+        isEdited = false;
+        decimalPosition = undefined;
     })
-})
-
-clearBtn.addEventListener('click', function (e) {
-    if (edited === false && currentMessage === 0) { // AC
-        operator = {};
-        values = {operator};
-        return;
-    }
-
-    if (values.operator.previous === undefined) {
-        values = {operator};
-        currentMessage = outputMessage(0, 0);
-        return;
-    }
-
-    edited = false;
-    currentMessage = outputMessage(0, 0);
-    clearBtn.textContent = "AC";
 })
 
 const changeBtn = document.querySelector("#change");
 changeBtn.addEventListener('click', function(e) {
-    currentMessage = updateMessage(currentMessage);
+    currentMessage = updateMessagePosNeg(currentMessage);
 })
+
+const decimalBtn = document.querySelector(".decimal");
+decimalBtn.addEventListener('click', function(e) {
+    decimalPosition = currentMessage.toString().length
+
+    const outputText = document.querySelector(".output")
+    outputText.textContent = currentMessage + ".";
+})
+
 // TODO : . Button
 // TODO : % Button
 // TODO : GUI
