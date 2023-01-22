@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-size: 32px;
+    font-family: 'Source Sans Pro', sans-serif;
+    margin: 0;
+    padding: 0;
+    
+    background-color: #181818;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    margin: 0;
+    padding: 0;
+    border: 0px;
+    font-size: 32px;
+    
+    height: 3rem;
+    width: 3rem;
+    
+    border-radius: 100%;
+
+    color: #ffffff;
+    background-color: #818181;
+}
+
+.container {
+    display: inline-flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+
+    border-radius: 1.2rem;
+
+    align-items: flex-end;
+    padding: 1.5rem;
+    background-color: #313131;
+}
+
+.row {
+    display: flex;
+    padding-bottom: 1rem;
+    gap: 1rem;
+}
+
+.container .row-output {
+    padding-bottom: 3rem;
+}
+
+.container .end {
+    padding-bottom: 0rem;
+}
+
+p {
+    font-size: 58px;
+    color: #ffffff;
+    margin: 0;
+}
+
+.large-number {
+    width: 7rem;
+    border-radius: 5rem;
+    padding-left: 1rem;
+    text-align: left;
+}
+
+.core-function {
+    background-color: orange;
+}
+
+.top-function, .decimal {
+    background-color: #454545;
+}
+
+
