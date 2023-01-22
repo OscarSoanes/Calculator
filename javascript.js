@@ -11,6 +11,9 @@ function multiply (previous, current) {
 }
 
 function divide (previous, current) {
+    if (previous == 0 && current == 0) {
+        return "Error";
+    }
     return previous / current;
 }
 
@@ -98,12 +101,20 @@ function calculate (obj, currentMessage, newOperator, isEdited) {
     currentMessage = operate(obj.operator.previous, obj.previous, obj.next)
     outputMessage(0, currentMessage);
     
+
     // changing all next values to previous values
     obj.previous = currentMessage;
     obj.next = undefined;
 
     obj.operator.previous = obj.operator.next;
     obj.operator.next = undefined;
+
+    if (currentMessage == "Error") {
+        obj.previous = undefined;
+        obj.next = undefined;
+        obj.operator.previous = undefined;
+        obj.operator.next = undefined;
+    }
 
     return [obj, currentMessage];
 }
@@ -186,7 +197,7 @@ decimalBtn.addEventListener('click', function(e) {
 const percentButton = document.querySelector("#percent");
 percentButton.addEventListener('click', function(e) {
     currentMessage = operate("/", currentMessage, 100)
-    
+
     const outputText = document.querySelector(".output")
     outputText.textContent = currentMessage;
 })
