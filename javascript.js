@@ -172,12 +172,23 @@ changeBtn.addEventListener('click', function(e) {
 
 const decimalBtn = document.querySelector(".decimal");
 decimalBtn.addEventListener('click', function(e) {
+    if (decimalPosition != undefined) {
+        return;
+    }
+
     decimalPosition = currentMessage.toString().length
 
+    // temporary addition of . (as there is no value on right hand side to hold it)
     const outputText = document.querySelector(".output")
     outputText.textContent = currentMessage + ".";
 })
 
-// TODO : . Button
-// TODO : % Button
+const percentButton = document.querySelector("#percent");
+percentButton.addEventListener('click', function(e) {
+    currentMessage = operate("/", currentMessage, 100)
+    
+    const outputText = document.querySelector(".output")
+    outputText.textContent = currentMessage;
+})
+
 // TODO : GUI
