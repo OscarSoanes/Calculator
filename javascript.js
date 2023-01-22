@@ -16,6 +16,10 @@ function divide (previous, current) {
 
 function operate (operator, previous, current) {
     let output;
+
+    previous = parseInt(previous);
+    current = parseInt(current);
+
     switch(operator) {
         case "+":
             output = add(previous, current);
@@ -23,11 +27,13 @@ function operate (operator, previous, current) {
         case "-":
             output = subtract(previous, current);
             break;
-        case "*":
+        case "x":
             output = multiply(previous, current);
             break;
         case "/":
             output = divide(previous, current);
+            break;
+        case "=":
             break;
     }
 
@@ -48,13 +54,56 @@ function outputMessage (current, next) {
     return output;
 }
 
+
+function calculate (obj, currentMessage, newOperator) {
+    // operators
+    if (obj.operator.previous === undefined) {
+        obj.operator.previous = newOperator;
+    } else if (obj.operator.next === undefined) {
+        obj.operator.next = newOperator;
+    }
+
+    // numbers
+    if (obj.previous === undefined) {
+        obj.previous = currentMessage;
+        currentMessage = outputMessage(0,0);
+        return [obj, currentMessage]; 
+    }
+    if (obj.next === undefined) {
+        obj.next = currentMessage;
+    }
+
+    // should only be here if everything is full.
+    currentMessage = operate(obj.operator.previous, obj.previous, obj.next)
+    outputMessage(0, currentMessage);
+
+    return [obj, currentMessage];
+}
+
+// numbers
 let currentMessage = outputMessage(0, 0);
-
-
 const numbers = document.querySelectorAll(".number");
 
 numbers.forEach(number => {
-    number.addEventListener('click', event => {
-        currentMessage = outputMessage(currentMessage, number.textContent)
+    number.addEventListener('click', () => {
+        currentMessage = outputMessage(currentMessage, number.textContent);
+    })
+})
+
+
+// core functionality
+const coreFunctions = document.querySelectorAll(".core-function");
+
+let previous;
+let current;
+
+let operator = {previous, current};
+let values = {previous, current, operator};
+
+coreFunctions.forEach(functions => {
+    functions.addEventListener('click', () => {
+        const valuesTemp = calculate(values, currentMessage, functions.textContent)
+        values = valuesTemp[0];
+        currentMessage = valuesTemp[1];
     })
 })
