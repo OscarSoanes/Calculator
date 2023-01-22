@@ -33,3 +33,28 @@ function operate (operator, previous, current) {
 
     return output;
 }
+
+function outputMessage (current, next) {
+    let output;
+    if (current === 0 && next != ".") {
+        output = next;
+    } else {
+        output = current.toString() + next;
+    }
+
+    const outputText = document.querySelector(".output")
+    outputText.textContent = output;
+
+    return output;
+}
+
+let currentMessage = outputMessage(0, 0);
+
+
+const numbers = document.querySelectorAll(".number");
+
+numbers.forEach(number => {
+    number.addEventListener('click', event => {
+        currentMessage = outputMessage(currentMessage, number.textContent)
+    })
+})
