@@ -128,7 +128,6 @@ coreFunctions.forEach(functions => {
     })
 })
 
-// TODO : Clear Button
 // TODO : +/- button
 // TODO : % Button
 
@@ -136,6 +135,12 @@ clearBtn.addEventListener('click', function (e) {
     if (edited === false && currentMessage === 0) { // AC
         operator = {}
         values = {operator}
+        return;
+    }
+
+    if (values.operator.previous === undefined) {
+        values = {operator}
+        currentMessage = outputMessage(0, 0);
         return;
     }
 
