@@ -119,6 +119,37 @@ function calculate (obj, currentMessage, newOperator, isEdited) {
     return [obj, currentMessage];
 }
 
+function selected(operator) {
+    const divideBtn = document.querySelector("#divide");
+    const multiplyBtn = document.querySelector("#multiply");
+    const minusBtn = document.querySelector("#minus");
+    const plusBtn = document.querySelector("#plus");
+    const equalsBtn = document.querySelector("#equals");
+
+    divideBtn.classList.remove("selected");
+    multiplyBtn.classList.remove("selected");
+    minusBtn.classList.remove("selected");
+    plusBtn.classList.remove("selected");
+    equalsBtn.classList.remove("selected");
+    
+    switch (operator) {
+        case "/":
+            divideBtn.classList.add("selected");
+            break;
+        case "x":
+            multiplyBtn.classList.add("selected");
+            break;
+        case "-":
+            minusBtn.classList.add("selected");
+            break;
+        case "+":
+            plusBtn.classList.add("selected");
+            break;
+        case "=": 
+            equalsBtn.classList.add("selected");
+            break;
+    }
+}
 
 // variables
 let replaceNumber = false; // tells whether the number needs to be changed
@@ -173,6 +204,8 @@ coreFunctions.forEach(functions => {
         replaceNumber = true;
         isEdited = false;
         decimalPosition = undefined;
+
+        selected(values.operator.previous);
     })
 })
 
@@ -202,4 +235,6 @@ percentButton.addEventListener('click', function(e) {
     outputText.textContent = currentMessage;
 })
 
-// TODO : GUI
+// TODO : KEY INPUT (1-9, +, -, /, *, ., %, =)
+
+// TODO : SHOW SELECTED (/ X - + =)

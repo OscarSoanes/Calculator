@@ -80,4 +80,8 @@ p {
     background-color: #454545;
 }
 
-
+.selected {
+    border: #ff9900 solid 3px;
+    background-color: #313131;
+    color: #ff9900;
+}
