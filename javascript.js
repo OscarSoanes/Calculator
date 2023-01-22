@@ -56,7 +56,12 @@ function outputMessage (current, next) {
 }
 
 
-function calculate (obj, currentMessage, newOperator, replaceNumber) {
+function calculate (obj, currentMessage, newOperator, edited) {
+    if (edited === false) {
+        obj.operator.previous = newOperator;
+        return [obj, currentMessage];
+    }
+
     // operators
     if (obj.operator.previous === undefined) {
         obj.operator.previous = newOperator;
@@ -67,7 +72,6 @@ function calculate (obj, currentMessage, newOperator, replaceNumber) {
     // numbers
     if (obj.previous === undefined) {
         obj.previous = currentMessage;
-        currentMessage = outputMessage(0,0);
         return [obj, currentMessage]; 
     }
     if (obj.next === undefined) {
@@ -85,12 +89,12 @@ function calculate (obj, currentMessage, newOperator, replaceNumber) {
     obj.operator.previous = obj.operator.next;
     obj.operator.next = undefined;
 
-    replaceNumber = true; 
-    return [obj, currentMessage, replaceNumber];
+    return [obj, currentMessage];
 }
 
 // numbers
 let replaceNumber = false;
+let edited = false;
 let currentMessage = outputMessage(0, 0);
 const numbers = document.querySelectorAll(".number");
 
@@ -100,6 +104,7 @@ numbers.forEach(number => {
             currentMessage = outputMessage(0, 0);
             replaceNumber = false;
         }
+        edited = true;
         currentMessage = outputMessage(currentMessage, number.textContent);
     })
 })
@@ -116,9 +121,10 @@ let values = {operator};
 
 coreFunctions.forEach(functions => {
     functions.addEventListener('click', () => {
-        const valuesTemp = calculate(values, currentMessage, functions.textContent, replaceNumber)
+        const valuesTemp = calculate(values, currentMessage, functions.textContent, edited)
         values = valuesTemp[0];
         currentMessage = valuesTemp[1];
-        replaceNumber = valuesTemp[2];
+        replaceNumber = true;
+        edited = false;
     })
 })
