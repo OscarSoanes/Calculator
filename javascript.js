@@ -57,7 +57,6 @@ function outputMessage (current, next) {
     return output;
 }
 
-
 function calculate (obj, currentMessage, newOperator, edited) {
     if (edited === false) {
         obj.operator.previous = newOperator;
@@ -94,33 +93,31 @@ function calculate (obj, currentMessage, newOperator, edited) {
     return [obj, currentMessage];
 }
 
-// numbers
+
+// variables
 let replaceNumber = false;
 let edited = false;
 let currentMessage = outputMessage(0, 0);
-const numbers = document.querySelectorAll(".number");
+let previous;
+let current;
+let operator = {};
+let values = {operator};
+const clearBtn = document.querySelector("#clear");
 
+const numbers = document.querySelectorAll(".number");
 numbers.forEach(number => {
     number.addEventListener('click', () => {
         if (replaceNumber == true) {
             currentMessage = outputMessage(0, 0);
             replaceNumber = false;
         }
+        clearBtn.textContent = "C"
         edited = true;
         currentMessage = outputMessage(currentMessage, number.textContent);
     })
 })
 
-
-// core functionality
 const coreFunctions = document.querySelectorAll(".core-function");
-
-let previous;
-let current;
-
-let operator = {};
-let values = {operator};
-
 coreFunctions.forEach(functions => {
     functions.addEventListener('click', () => {
         const valuesTemp = calculate(values, currentMessage, functions.textContent, edited)
@@ -130,3 +127,22 @@ coreFunctions.forEach(functions => {
         edited = false;
     })
 })
+
+// TODO : Clear Button
+// TODO : +/- button
+// TODO : % Button
+
+clearBtn.addEventListener('click', function (e) {
+    if (edited === false && currentMessage === 0) { // AC
+        operator = {}
+        values = {operator}
+        return;
+    }
+
+    edited = false;
+    currentMessage = outputMessage(0, 0);
+    clearBtn.textContent = "AC"
+})
+// TODO : . Button
+
+// TODO : GUI
