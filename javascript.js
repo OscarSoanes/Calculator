@@ -49,6 +49,8 @@ function outputMessage (current, next) {
         output = current.toString() + next;
     }
 
+    output = parseFloat((output.toString()).substring(0,10))
+
     const outputText = document.querySelector(".output")
     outputText.textContent = output;
 
