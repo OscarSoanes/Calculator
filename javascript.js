@@ -65,7 +65,7 @@ function calculate (obj, currentMessage, newOperator, edited) {
     // operators
     if (obj.operator.previous === undefined) {
         obj.operator.previous = newOperator;
-    } else if (obj.operator.next === undefined) {
+    } else if (obj.operator.next === undefined && newOperator != "=") {
         obj.operator.next = newOperator;
     }
 
