@@ -298,10 +298,14 @@ document.addEventListener("keydown", (event) => {
 
         case "Backspace":
             currentMessage = deleteOne(currentMessage);
-            
             break;
         case ".":
-            console.log("decimal");
+            if (decimalPosition != undefined) {
+                return;
+            }
+        
+            decimalPosition = currentMessage.toString().length
+            outputMessage(currentMessage, "", decimalPosition);
             break;
     }
 })
