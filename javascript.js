@@ -176,6 +176,21 @@ function updateMessageNumber(replaceNumber, currentMessage, isEdited, decimalPos
     return [replaceNumber, currentMessage, isEdited, decimalPosition]
 }
 
+function deleteOne(currentMessage) {
+    const outputText = document.querySelector(".output")
+
+    currentMessage = currentMessage.toString();
+
+    currentMessage = currentMessage.substring(0, currentMessage.length - 1);
+
+    if (currentMessage != "") {
+        outputText.textContent = currentMessage;
+    } else {
+        outputText.textContent = "0";
+    }
+    return currentMessage;
+}
+
 // variables
 let replaceNumber = false; // tells whether the number needs to be changed
 let isEdited = false;
@@ -260,14 +275,30 @@ document.addEventListener("keydown", (event) => {
             const outputText = document.querySelector(".output")
             outputText.textContent = currentMessage;
             break;
-        case "/": case "-": case "+": case "=":
-            console.log("operator NMP");
+
+        case "/": case "-": case "+": case "=": 
+            let valuesTemp = calculate(values, currentMessage, event.key, isEdited)
+            values = valuesTemp[0];
+            currentMessage = valuesTemp[1];
+            replaceNumber = true;
+            isEdited = false;
+            decimalPosition = undefined;
+            selected(values.operator.previous);
             break;
+
         case "*":
-            console.log("operator MP");
+            let valuesTempX = calculate(values, currentMessage, "x", isEdited)
+            values = valuesTempX[0];
+            currentMessage = valuesTempX[1];
+            replaceNumber = true;
+            isEdited = false;
+            decimalPosition = undefined;
+            selected(values.operator.previous);
             break;
+
         case "Backspace":
-            console.log("backspace");
+            currentMessage = deleteOne(currentMessage);
+            
             break;
         case ".":
             console.log("decimal");
