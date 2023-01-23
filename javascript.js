@@ -11,7 +11,7 @@ function multiply (previous, current) {
 }
 
 function divide (previous, current) {
-    if (previous == 0 && current == 0) {
+    if (previous == 0 || current == 0) {
         return "Error";
     }
     return previous / current;
@@ -47,7 +47,7 @@ function operate (operator, previous, current) {
 function outputMessage (current, next, decimalPosition) {
     let output = String();
 
-    if (current == 0) {
+    if (current == 0 && decimalPosition == undefined) {
         output += next.toString();
     } else {
         output += current.toString() + next;
@@ -124,13 +124,11 @@ function selected(operator) {
     const multiplyBtn = document.querySelector("#multiply");
     const minusBtn = document.querySelector("#minus");
     const plusBtn = document.querySelector("#plus");
-    const equalsBtn = document.querySelector("#equals");
 
     divideBtn.classList.remove("selected");
     multiplyBtn.classList.remove("selected");
     minusBtn.classList.remove("selected");
     plusBtn.classList.remove("selected");
-    equalsBtn.classList.remove("selected");
     
     switch (operator) {
         case "/":
@@ -144,9 +142,6 @@ function selected(operator) {
             break;
         case "+":
             plusBtn.classList.add("selected");
-            break;
-        case "=": 
-            equalsBtn.classList.add("selected");
             break;
     }
 }
@@ -236,5 +231,29 @@ percentButton.addEventListener('click', function(e) {
 })
 
 // TODO : KEY INPUT (1-9, +, -, /, *, ., %, =)
+let key;
+document.addEventListener("keydown", (event) => {
+    switch(event.key) {
+        case "0": case "1": case "2": case "3": case "4": 
+        case "5": case "6": case "7": case "8": case "9":
+            console.log ("integer");
+            break;
+        case "%":
+            console.log("percent");
+            break;
+        case "/": case "-": case "+": case "=":
+            console.log("operator NMP");
+            break;
+        case "*":
+            console.log("operator MP");
+            break;
+        case "Backspace":
+            console.log("backspace");
+            break;
+        case ".":
+            console.log("decimal");
+            break;
+    }
+})
+// TODO : BACKSPACE
 
-// TODO : SHOW SELECTED (/ X - + =)
