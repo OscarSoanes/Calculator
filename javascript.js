@@ -11,48 +11,41 @@ function multiply (previous, current) {
 }
 
 function divide (previous, current) {
-    if (previous == 0 || current == 0) {
+    if (previous == 0 || current == 0 || isNaN(previous)) {
         return "Error";
     }
     return previous / current;
 }
 
 function operate (operator, previous, current) {
-    let output;
-
     previous = parseFloat(previous);
     current = parseFloat(current);
 
     switch(operator) {
         case "+":
-            output = add(previous, current);
-            break;
+            return add(previous, current);
         case "-":
-            output = subtract(previous, current);
-            break;
+            return subtract(previous, current);
         case "x":
-            output = multiply(previous, current);
-            break;
+            return multiply(previous, current);
         case "/":
-            output = divide(previous, current);
-            break;
-        case "=":
-            output = current;
-            break;
+            return divide(previous, current);
+        default: // = & everything else
+            return current;
     }
-
-    return output;
 }
 
 function outputMessage (current, next, decimalPosition) {
     let output = String();
+    const outputText = document.querySelector(".output")
 
-    if (current == 0 && decimalPosition == undefined) {
-        output += next.toString();
-    } else {
-        output += current.toString() + next;
+    if (current == 0 && decimalPosition == undefined) { // 0
+        output += next;
+    } else { // everything else __.__
+        output = current + next;
     }
 
+    // adds decimal position
     if (decimalPosition != undefined && !output.includes(".")) {
         output = output.substring(0, decimalPosition) + "." + output.substring(decimalPosition);
     }
@@ -60,7 +53,6 @@ function outputMessage (current, next, decimalPosition) {
     // max length
     output = output.substring(0, 10);
 
-    const outputText = document.querySelector(".output")
     outputText.textContent = output;
 
     return output;
@@ -146,6 +138,44 @@ function selected(operator) {
     }
 }
 
+function clear(isEdited, currentMessage, decimalPosition, values, clearBtn) {
+    if (isEdited === false && currentMessage === 0) { // AC
+        operator = {};
+        values = {operator};
+        decimalPosition = undefined;
+        return [isEdited, currentMessage, decimalPosition, values];
+    }
+
+    if (values.operator.previous === undefined) {
+        values = {operator};
+        currentMessage = outputMessage(0, 0, undefined);
+        decimalPosition = undefined;
+        return [isEdited, currentMessage, decimalPosition, values];
+    }
+
+    isEdited = false;
+    currentMessage = outputMessage(0, 0, undefined);
+    clearBtn.textContent = "AC";
+    decimalPosition = undefined;
+
+    console.log(isEdited, currentMessage, decimalPosition, values)
+
+    return [isEdited, currentMessage, decimalPosition, values];
+}
+
+function updateMessageNumber(replaceNumber, currentMessage, isEdited, decimalPosition, numberEntered, clearBtn) {
+    if (replaceNumber === true) {
+        currentMessage = outputMessage(0, 0, undefined);
+        replaceNumber = false;
+    }
+
+    clearBtn.textContent = "C"
+    isEdited = true;
+    currentMessage = outputMessage(currentMessage, numberEntered, decimalPosition);
+
+    return [replaceNumber, currentMessage, isEdited, decimalPosition]
+}
+
 // variables
 let replaceNumber = false; // tells whether the number needs to be changed
 let isEdited = false;
@@ -155,42 +185,31 @@ let values = {operator};
 let decimalPosition;
 
 const clearBtn = document.querySelector("#clear");
-clearBtn.addEventListener('click', function (e) {
-    if (isEdited === false && currentMessage === 0) { // AC
-        operator = {};
-        values = {operator};
-        decimalPosition = undefined;
-        return;
-    }
+const numbers = document.querySelectorAll(".number");
+const coreFunctions = document.querySelectorAll(".core-function");
+const changeBtn = document.querySelector("#change");
+const decimalBtn = document.querySelector(".decimal");
+const percentButton = document.querySelector("#percent");
 
-    if (values.operator.previous === undefined) {
-        values = {operator};
-        currentMessage = outputMessage(0, 0, undefined);
-        decimalPosition = undefined;
-        return;
-    }
-
-    isEdited = false;
-    currentMessage = outputMessage(0, 0, undefined);
-    clearBtn.textContent = "AC";
-    decimalPosition = undefined;
+clearBtn.addEventListener('click', () => {
+    const temp = clear(isEdited, currentMessage, decimalPosition, values, clearBtn);
+    isEdited = temp[0];
+    currentMessage = temp[1];
+    decimalPosition = temp[2];
+    values = temp[3];
 })
 
-const numbers = document.querySelectorAll(".number");
+
 numbers.forEach(number => {
     number.addEventListener('click', () => {
-        if (replaceNumber === true) {
-            currentMessage = outputMessage(0, 0, undefined);
-            replaceNumber = false;
-        }
-
-        clearBtn.textContent = "C"
-        isEdited = true;
-        currentMessage = outputMessage(currentMessage, number.textContent, decimalPosition);
+        const temp = updateMessageNumber(replaceNumber, currentMessage, isEdited, decimalPosition, number.textContent, clearBtn);
+        replaceNumber = temp[0];
+        currentMessage = temp[1];
+        isEdited = temp[2];
+        decimalPosition = temp[3];
     })
 })
 
-const coreFunctions = document.querySelectorAll(".core-function");
 coreFunctions.forEach(functions => {
     functions.addEventListener('click', () => {
         const valuesTemp = calculate(values, currentMessage, functions.textContent, isEdited)
@@ -199,17 +218,16 @@ coreFunctions.forEach(functions => {
         replaceNumber = true;
         isEdited = false;
         decimalPosition = undefined;
-
+        
         selected(values.operator.previous);
     })
 })
 
-const changeBtn = document.querySelector("#change");
 changeBtn.addEventListener('click', function(e) {
     currentMessage = updateMessagePosNeg(currentMessage);
 })
 
-const decimalBtn = document.querySelector(".decimal");
+
 decimalBtn.addEventListener('click', function(e) {
     if (decimalPosition != undefined) {
         return;
@@ -218,7 +236,7 @@ decimalBtn.addEventListener('click', function(e) {
     decimalPosition = currentMessage.toString().length
 })
 
-const percentButton = document.querySelector("#percent");
+
 percentButton.addEventListener('click', function(e) {
     currentMessage = operate("/", currentMessage, 100)
 
@@ -226,16 +244,21 @@ percentButton.addEventListener('click', function(e) {
     outputText.textContent = currentMessage;
 })
 
-// TODO : KEY INPUT (1-9, +, -, /, *, ., %, =)
-let key;
 document.addEventListener("keydown", (event) => {
     switch(event.key) {
         case "0": case "1": case "2": case "3": case "4": 
         case "5": case "6": case "7": case "8": case "9":
-            console.log ("integer");
+            const temp = updateMessageNumber(replaceNumber, currentMessage, isEdited, decimalPosition, event.key, clearBtn);
+            replaceNumber = temp[0];
+            currentMessage = temp[1];
+            isEdited = temp[2];
+            decimalPosition = temp[3];
             break;
         case "%":
-            console.log("percent");
+            currentMessage = operate("/", currentMessage, 100)
+
+            const outputText = document.querySelector(".output")
+            outputText.textContent = currentMessage;
             break;
         case "/": case "-": case "+": case "=":
             console.log("operator NMP");
@@ -251,5 +274,4 @@ document.addEventListener("keydown", (event) => {
             break;
     }
 })
-// TODO : BACKSPACE
 
