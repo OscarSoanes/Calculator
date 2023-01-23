@@ -216,10 +216,6 @@ decimalBtn.addEventListener('click', function(e) {
     }
 
     decimalPosition = currentMessage.toString().length
-
-    // temporary addition of . (as there is no value on right hand side to hold it)
-    const outputText = document.querySelector(".output")
-    outputText.textContent = currentMessage + ".";
 })
 
 const percentButton = document.querySelector("#percent");
